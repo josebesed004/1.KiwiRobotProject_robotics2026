@@ -27,6 +27,9 @@ public class DriveForwardForTime extends AutoCommon {
         robot.startMove(0.5, 0, 0);
         sleep(2000);
         robot.stopMove();
+        sleep(500);
+        robot.startMove(-0.5, 0, 0);
+        sleep(2000);
     }
 
 }

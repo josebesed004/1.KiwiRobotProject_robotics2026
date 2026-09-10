@@ -7,6 +7,7 @@ package edu.elon.robotics.hardware;
  */
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class KiwiBot {
@@ -37,7 +38,7 @@ public class KiwiBot {
         // set the direction FORWARD for AndyMark Neverest motors
         // set the direction REVERSE for GoBilda YellowJacket motors
         for (DcMotor motor : drivebase) {
-            motor.setDirection(DcMotor.Direction.FORWARD);
+            motor.setDirection(DcMotor.Direction.REVERSE);
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
