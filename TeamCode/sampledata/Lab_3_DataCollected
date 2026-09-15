@@ -1,0 +1,26 @@
+Data goes
+Left Motor, Right Motor, Aux Motor
+
+Tick vs distance (0.3 Speed)
+2026-09-15 13:55:35.867  1599-1776  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 505,-507,0
+2026-09-15 14:02:37.822  1599-1835  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 606,-605,0
+2026-09-15 14:04:31.834  1599-1849  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 706,-703,2
+2026-09-15 14:05:28.279  1599-1859  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 805,-781,-1
+2026-09-15 14:06:19.118  1599-1867  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 906,-898,-1
+2026-09-15 14:06:49.204  1599-1873  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1005,-998,-1
+2026-09-15 14:07:24.382  1599-1883  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1107,-1099,3
+2026-09-15 14:08:03.423  1599-1892  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1205,-1197,-1
+2026-09-15 14:08:58.515  1599-1901  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1305,-1295,1
+2026-09-15 14:10:02.470  1599-1915  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1405,-1394,1
+
+Tick vs distance (0.6 Speed)
+2026-09-15 14:17:21.394  1599-2340  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 511,-503,0
+2026-09-15 14:18:49.514  1599-2479  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 615,-602,0
+2026-09-15 14:19:24.480  1599-2544  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 711,-697,-3
+2026-09-15 14:20:03.689  1599-2583  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 812,-796,0
+2026-09-15 14:20:34.497  1599-2663  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 910,-850,-1
+2026-09-15 14:21:43.367  1599-2775  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1010,-992,-1
+2026-09-15 14:22:14.767  1599-2834  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1110,-1092,0
+2026-09-15 14:23:03.869  1599-2924  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1208,-1198,3
+2026-09-15 14:24:32.515  1599-3076  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1310,-1297,0
+2026-09-15 14:25:30.196  1599-3140  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1411,-1397,0
