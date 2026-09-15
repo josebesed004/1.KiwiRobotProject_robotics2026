@@ -6,9 +6,11 @@ package edu.elon.robotics.autonomous;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import edu.elon.robotics.hardware.KiwiBot;
+
 
 public class AutoCommon extends LinearOpMode {
 
@@ -18,6 +20,12 @@ public class AutoCommon extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new KiwiBot(hardwareMap, true);
+    }
+
+    protected void driveForTime(double power, long milliseconds) {
+        robot.startMove(power, 0, 0);
+        sleep(milliseconds);
+        robot.stopMove();
     }
 
 }
