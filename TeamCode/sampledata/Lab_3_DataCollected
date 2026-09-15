@@ -26,13 +26,13 @@ Tick vs distance (0.6 Speed)
 2026-09-15 17:03:19.950  1564-3476  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1411,-1402,0
 
 Ticks vs distance (0.3 StrafeSpeed)
-2026-09-15 16:52:52.162  1564-2401  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 503,487,-1009
-2026-09-15 16:53:22.214  1564-2455  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 603,587,-1209
-2026-09-15 16:53:43.647  1564-2495  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 703,689,-1409
-2026-09-15 16:54:03.940  1564-2526  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 803,790,-1606
-2026-09-15 16:54:25.039  1564-2564  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 903,887,-1807
-2026-09-15 16:54:51.282  1564-2617  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 1003,987,-2010
-2026-09-15 16:55:17.674  1564-2666  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 1103,1089,-2209
-2026-09-15 16:55:39.488  1564-2706  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 1203,1190,-2410
-2026-09-15 16:56:03.339  1564-2753  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 1302,1291,-2609
-2026-09-15 16:57:53.892  1564-2932  System.out              com.qualcomm.ftcrobotcontroller      I  MyData_Speed: 1403,1395,-2814
+2026-09-15 16:52:52.162  1564-2401  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 503,487,-1009
+2026-09-15 16:53:22.214  1564-2455  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 603,587,-1209
+2026-09-15 16:53:43.647  1564-2495  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 703,689,-1409
+2026-09-15 16:54:03.940  1564-2526  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 803,790,-1606
+2026-09-15 16:54:25.039  1564-2564  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 903,887,-1807
+2026-09-15 16:54:51.282  1564-2617  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1003,987,-2010
+2026-09-15 16:55:17.674  1564-2666  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1103,1089,-2209
+2026-09-15 16:55:39.488  1564-2706  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1203,1190,-2410
+2026-09-15 16:56:03.339  1564-2753  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1302,1291,-2609
+2026-09-15 16:57:53.892  1564-2932  System.out              com.qualcomm.ftcrobotcontroller      I  MyData: 1403,1395,-2814
