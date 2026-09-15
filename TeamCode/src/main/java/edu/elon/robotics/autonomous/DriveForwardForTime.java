@@ -23,13 +23,10 @@ public class DriveForwardForTime extends AutoCommon {
         // pause between initialization and run
         waitForStart();
 
-        // drive forward at 0.5 speed for 2 seconds then stop
-        robot.startMove(0.5, 0, 0);
-        sleep(2000);
-        robot.stopMove();
-        sleep(500);
-        robot.startMove(-0.5, 0, 0);
-        sleep(2000);
+        // drive forward at 0.7 speed for 1.5 seconds then stop
+        driveForTime(0.5,2500);
+        driveForTime(-0.5,2500);
+
     }
 
 }
