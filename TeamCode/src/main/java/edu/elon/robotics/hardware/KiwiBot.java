@@ -89,7 +89,7 @@ public class KiwiBot {
     }
 
     public int convertDegreesToTicks(double degrees){
-        return (int) (degrees/360 * TICKS_PER_ROTATION);
+        return (int) (convertDistanceToTicks(degrees/360 * TURNING_CIRCLE));
     }
 
 }
