@@ -25,13 +25,4 @@ public class EncoderDrive extends AutoCommon {
                 + robot.motorAux.getCurrentPosition());
     }
 
-    protected void driveForNTicks(double drive, double strafe, double rotate, int ticks){
-        robot.resetDriveEncoders();
-        robot.startMove(drive, strafe, rotate);
-        while (opModeIsActive() && Math.abs(robot.motorLeft.getCurrentPosition()) < ticks) {
-
-        }
-        robot.stopMove();
-    }
-
 }
