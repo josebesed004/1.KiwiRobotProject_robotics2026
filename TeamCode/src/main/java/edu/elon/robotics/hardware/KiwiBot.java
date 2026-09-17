@@ -6,16 +6,18 @@ package edu.elon.robotics.hardware;
  *  @author J. Hollingsworth and K. Altmann
  */
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+@Configurable
 public class KiwiBot {
 
     public final double TICKS_PER_ROTATION = 537.7;
     public final double WHEEL_CIRCUMFERENCE = 30.1593;
     public final double TICKS_PER_CM = TICKS_PER_ROTATION / WHEEL_CIRCUMFERENCE;
-    public final double TURNING_DIAMETER_CM = 33.1399;
+    public static double TURNING_DIAMETER_CM = 33.1399;
     public final double TURNING_CIRCLE = Math.PI * TURNING_DIAMETER_CM; // Diameter times pi
 
     // drivebase motors

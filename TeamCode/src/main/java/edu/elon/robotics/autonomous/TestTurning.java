@@ -1,8 +1,10 @@
 package edu.elon.robotics.autonomous;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-@Autonomous(name = "TestTurning")
+
+@Autonomous(name="TestTurning", group="Lab4")
 public class TestTurning extends AutoCommon {
 
     private final double[]  ANGLE_SEQ = {90, -90, -180, 180, 45, -45,
