@@ -12,6 +12,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class KiwiBot {
 
+    public final double TICKS_PER_ROTATION = 537.7;
+    public final double WHEEL_CIRCUMFERENCE = 30.1593;
+    public final double TICKS_PER_CM = TICKS_PER_ROTATION / WHEEL_CIRCUMFERENCE;
+
     // drivebase motors
     public DcMotor motorLeft;
     public DcMotor motorRight;
@@ -75,6 +79,11 @@ public class KiwiBot {
 
     public void stopMove() {
         startMove(0, 0, 0);
+    }
+
+    public int convertDistanceToTicks(double cm){
+        // Gets rid of all the decimal values.
+        return (int) (TICKS_PER_CM * cm);
     }
 
 }
