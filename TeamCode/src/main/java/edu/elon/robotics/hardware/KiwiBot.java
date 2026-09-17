@@ -88,4 +88,8 @@ public class KiwiBot {
         return (int) (TICKS_PER_CM * cm);
     }
 
+    public int convertDegreesToTicks(double degrees){
+        return (int) (degrees/360 * TICKS_PER_ROTATION);
+    }
+
 }
