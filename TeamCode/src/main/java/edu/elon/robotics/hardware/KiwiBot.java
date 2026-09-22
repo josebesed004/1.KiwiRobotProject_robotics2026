@@ -17,7 +17,7 @@ public class KiwiBot {
     public final double TICKS_PER_ROTATION = 537.7;
     public final double WHEEL_CIRCUMFERENCE = 30.1593;
     public final double TICKS_PER_CM = TICKS_PER_ROTATION / WHEEL_CIRCUMFERENCE;
-    public static double TURNING_DIAMETER_CM = 33.1399;
+    public static double TURNING_DIAMETER_CM = 29.5; //tested value - accurate to 1-2 degrees of rotation
     public final double TURNING_CIRCLE = Math.PI * TURNING_DIAMETER_CM; // Diameter times pi
 
     // drivebase motors
@@ -30,6 +30,10 @@ public class KiwiBot {
 
     // which ratio are the motors using
     public final KiwiDriveRatio ratio;
+
+    public final double LR_TICKS_PER_FWD_CM  = TICKS_PER_CM * Math.sin(Math.PI / 3.0);
+    public final double LR_TICKS_PER_SIDE_CM = TICKS_PER_CM * Math.cos(Math.PI / 3.0);
+    public final double AUX_TICKS_PER_SIDE_CM = TICKS_PER_CM;
 
     public KiwiBot(HardwareMap hardwareMap, boolean isAuto) {
 
@@ -87,13 +91,18 @@ public class KiwiBot {
 
     public int convertDistanceToTicks(double cm){
         // Gets rid of all the decimal values.
-        return (int) (TICKS_PER_CM * cm);
+        return (int) (TICKS_PER_CM * Math.abs(cm));
     }
 
     public int convertDegreesToTicks(double degrees){
         // Keep angle always positive
-        double distanceToTravel = Math.abs(degrees/360 * TURNING_CIRCLE);
+        double distanceToTravel = Math.abs(degrees/360.0 * TURNING_CIRCLE);
         return convertDistanceToTicks(distanceToTravel);
+    }
+
+    public double convertTicksToDegrees(int ticks){
+        double distance = Math.abs(ticks) / TICKS_PER_CM;
+        return (distance / TURNING_CIRCLE) * 360.0;
     }
 
 }

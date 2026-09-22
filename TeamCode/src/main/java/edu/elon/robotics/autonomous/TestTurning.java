@@ -12,7 +12,7 @@ public class TestTurning extends AutoCommon {
     private final double   SLOW_SPEED = 0.3;
     private final double MEDIUM_SPEED = 0.65;
     private final double   FAST_SPEED = 1.0;
-    private final long    SHORT_PAUSE = 250;
+    private final long    SHORT_PAUSE = 3000;
     private final long     LONG_PAUSE = 3000;
 
     @Override

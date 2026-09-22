@@ -9,6 +9,8 @@ import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import java.util.Locale;
+
 import edu.elon.robotics.hardware.KiwiBot;
 
 
@@ -32,7 +34,9 @@ public class AutoCommon extends LinearOpMode {
         robot.resetDriveEncoders();
         robot.startMove(drive, strafe, rotate);
         // Wait the number of ticks
-        while (opModeIsActive() && Math.abs(robot.motorLeft.getCurrentPosition()) < ticks) {}
+        while (opModeIsActive() && Math.abs(robot.motorLeft.getCurrentPosition()) < ticks) {
+            System.out.println(robot.motorLeft.getCurrentPosition());
+        }
         robot.stopMove();
     }
 
@@ -43,6 +47,18 @@ public class AutoCommon extends LinearOpMode {
         if (degrees < 0) maxPower = -maxPower;
 
         driveForNTicks(0,0,maxPower,robot.convertDegreesToTicks(degrees));
+
+        int actualTicks = Math.abs(robot.motorLeft.getCurrentPosition());
+        double actualDegrees = robot.convertTicksToDegrees(actualTicks);
+        if (degrees < 0) {
+            actualDegrees = -actualDegrees;
+        }
+
+        double overshootDegrees = actualDegrees - degrees;
+
+        System.out.printf(Locale.US,
+                "TURN_LOG: InputDeg=%.1f | ActualTicks=%d | ActualDeg=%.2f | OvershootDeg=%.2f%n",
+                degrees, actualTicks, actualDegrees, overshootDegrees);
     }
 
 }
