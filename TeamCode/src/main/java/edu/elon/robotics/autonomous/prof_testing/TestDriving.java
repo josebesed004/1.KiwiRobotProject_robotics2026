@@ -11,8 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import edu.elon.robotics.autonomous.AutoCommon;
 
-@Disabled
-@Autonomous(name = "Test Driving")
+@Autonomous(name="TestDriving", group="Lab4")
 public class TestDriving extends AutoCommon {
 
     private final double[]  DRIVE_SEQ = {100, -100,   0,    0, 75, -75,  -50,   50, 100, -100};

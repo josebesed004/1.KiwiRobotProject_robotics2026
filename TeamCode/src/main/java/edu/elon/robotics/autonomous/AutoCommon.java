@@ -118,7 +118,8 @@ public class AutoCommon extends LinearOpMode {
         DcMotor motor;
         int tick_count;
         if (LR_Tick_Count > AUX_tick_count){
-            motor = robot.motorLeft;
+            // Choose left motor when driving right and right motor when driving left
+            motor = cmSide > 0 ? robot.motorLeft : robot.motorRight;
             tick_count = LR_Tick_Count;
         }
         else{
