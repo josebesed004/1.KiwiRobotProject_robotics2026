@@ -61,4 +61,18 @@ public class AutoCommon extends LinearOpMode {
                 degrees, actualTicks, actualDegrees, overshootDegrees);
     }
 
+    /*Drive forward/backward for cmForward centimeters, and at the same time,
+    strafe left/right for cmSide centimeters.
+    A positive cmForward value will drive forward and a positive cmSide value will go to the right.
+    Negative values will do the opposite. maxPower will limit the overall speed.*/
+    protected void driveDistance(double cmForward,
+                                 double cmSide,
+                                 double maxPower){
+
+        double distance = Math.sqrt(Math.pow(cmForward,2) + Math.pow(cmSide,2));
+        double drivePower = maxPower * cmForward/distance;
+        double strafePower = maxPower * cmSide/distance;
+
+    }
+
 }

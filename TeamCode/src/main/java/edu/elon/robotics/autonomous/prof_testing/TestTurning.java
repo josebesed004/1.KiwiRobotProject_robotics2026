@@ -1,7 +1,8 @@
-package edu.elon.robotics.autonomous;
+package edu.elon.robotics.autonomous.prof_testing;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+
+import edu.elon.robotics.autonomous.AutoCommon;
 
 
 @Autonomous(name="TestTurning", group="Lab4")
