@@ -73,6 +73,10 @@ public class AutoCommon extends LinearOpMode {
         double drivePower = maxPower * cmForward/distance;
         double strafePower = maxPower * cmSide/distance;
 
+        int LR_Tick_Count = Math.abs((int)(robot.LR_TICKS_PER_SIDE_CM*cmSide));
+        LR_Tick_Count += Math.abs((int)(robot.LR_TICKS_PER_FWD_CM*cmForward));
+        int AUX_tick_count = Math.abs((int) (robot.AUX_TICKS_PER_SIDE_CM * cmSide));
+
     }
 
 }
