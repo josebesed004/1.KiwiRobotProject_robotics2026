@@ -8,6 +8,7 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.Locale;
 
@@ -30,12 +31,17 @@ public class AutoCommon extends LinearOpMode {
         robot.stopMove();
     }
 
+    // Default driveForNTicks counts the ticks of the left motor
     protected void driveForNTicks(double drive, double strafe, double rotate, int ticks){
+        driveForNTicks(drive,strafe,rotate,ticks,robot.motorLeft);
+    }
+
+    protected void driveForNTicks(double drive, double strafe, double rotate, int ticks, DcMotor motor){
         robot.resetDriveEncoders();
         robot.startMove(drive, strafe, rotate);
         // Wait the number of ticks
-        while (opModeIsActive() && Math.abs(robot.motorLeft.getCurrentPosition()) < ticks) {
-            System.out.println(robot.motorLeft.getCurrentPosition());
+        while (opModeIsActive() && Math.abs(motor.getCurrentPosition()) < ticks) {
+            System.out.println(motor.getCurrentPosition());
         }
         robot.stopMove();
     }
@@ -76,6 +82,19 @@ public class AutoCommon extends LinearOpMode {
         int LR_Tick_Count = Math.abs((int)(robot.LR_TICKS_PER_SIDE_CM*cmSide));
         LR_Tick_Count += Math.abs((int)(robot.LR_TICKS_PER_FWD_CM*cmForward));
         int AUX_tick_count = Math.abs((int) (robot.AUX_TICKS_PER_SIDE_CM * cmSide));
+
+        DcMotor motor;
+        int tick_count;
+        if (LR_Tick_Count > AUX_tick_count){
+            motor = robot.motorLeft;
+            tick_count = LR_Tick_Count;
+        }
+        else{
+            motor = robot.motorAux;
+            tick_count = AUX_tick_count;
+        }
+
+        driveForNTicks(drivePower,strafePower,0,tick_count,motor);
 
     }
 
