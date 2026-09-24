@@ -4,6 +4,7 @@ package edu.elon.robotics.autonomous;
  * General autonomous methods.
  */
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -14,12 +15,15 @@ import java.util.Locale;
 
 import edu.elon.robotics.hardware.KiwiBot;
 
-
+@Configurable
 public class AutoCommon extends LinearOpMode {
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
+    public static int RAMP_TICKS = 1000;
+
+    public static double BASE_POWER = 0.10;
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new KiwiBot(hardwareMap, true);
@@ -65,6 +69,34 @@ public class AutoCommon extends LinearOpMode {
         System.out.printf(Locale.US,
                 "TURN_LOG: InputDeg=%.1f | ActualTicks=%d | ActualDeg=%.2f | OvershootDeg=%.2f%n",
                 degrees, actualTicks, actualDegrees, overshootDegrees);
+    }
+
+    protected void rampUP(int maxTicks, double maxPower, DcMotor motor){
+        motor.setPower(BASE_POWER);
+        int MOTOR_START_POS = motor.getCurrentPosition();
+        double ACCELERATION = ((maxPower - BASE_POWER)/RAMP_TICKS);
+
+        if (maxTicks < 2 * RAMP_TICKS){
+            ACCELERATION = ((maxPower - BASE_POWER)/(maxTicks/2));
+        }
+
+        while (motor.getCurrentPosition() - MOTOR_START_POS < RAMP_TICKS && motor.getCurrentPosition() - MOTOR_START_POS < maxTicks/2 && motor.getPower() < maxPower){
+            motor.setPower(motor.getPower() + ACCELERATION);
+        }
+    }
+
+    protected void rampDown(int maxTicks, double maxPower, DcMotor motor){
+        motor.setPower(maxPower);
+        int MOTOR_START_POS = motor.getCurrentPosition();
+        double ACCELERATION = ((maxPower - BASE_POWER)/RAMP_TICKS);
+
+        if (maxTicks < 2 * RAMP_TICKS){
+            ACCELERATION = ((maxPower - BASE_POWER)/(maxTicks/2));
+        }
+
+        while (motor.getCurrentPosition() - MOTOR_START_POS < RAMP_TICKS && motor.getCurrentPosition() - MOTOR_START_POS < maxTicks/2 && motor.getPower() < maxPower){
+            motor.setPower(motor.getPower() - ACCELERATION);
+        }
     }
 
     /*Drive forward/backward for cmForward centimeters, and at the same time,
