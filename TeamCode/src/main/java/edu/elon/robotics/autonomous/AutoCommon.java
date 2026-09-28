@@ -41,27 +41,20 @@ public class AutoCommon extends LinearOpMode {
     }
 
     protected void driveForNTicks(double drive, double strafe, double rotate, int ticks, DcMotor motor){
+        ticks = Math.abs(ticks);
         robot.resetDriveEncoders();
-        robot.startMove(0, 0, 0);
         // Wait the number of ticks
-        int buffer = (int) (ticks * percentInterpolate);
-        Interpolation interpolateStart = new Interpolation(0,buffer);
-        Interpolation interpolateEnd = new Interpolation(0,buffer);
-        float powerMultiplier = 1;
-        while (opModeIsActive() && Math.abs(motor.getCurrentPosition()) < ticks) {
-            int currentTick = (int) motor.getCurrentPosition();
-            currentTick = currentTick < 0 ? currentTick *-1 : currentTick;
-            if (currentTick <= buffer) {
-                powerMultiplier = (float) interpolateStart.next() / buffer;
-                System.out.println(powerMultiplier + "start");
+        int buffer = Math.max((int) (ticks * percentInterpolate), 1);
 
-            }
-            else if (currentTick > ticks-buffer) {
-                System.out.println(powerMultiplier + "end");
-                powerMultiplier = 1 - ((float) interpolateEnd.next() / buffer);
-            }
-            else powerMultiplier = 1;
-            System.out.println("Buffer: "+buffer+", powerMult: "+powerMultiplier+", current tick = "+currentTick);
+        double powerMultiplier = 1;
+
+        while (opModeIsActive() && Math.abs(motor.getCurrentPosition()) < ticks) {
+            int currentTick = motor.getCurrentPosition();
+
+            currentTick = currentTick < 0 ? currentTick *-1 : currentTick;
+
+            powerMultiplier = interpolationMulti(currentTick, buffer, ticks);
+
             robot.startMove(drive * powerMultiplier, strafe * powerMultiplier, rotate * powerMultiplier);
         }
         robot.stopMove();
@@ -86,6 +79,20 @@ public class AutoCommon extends LinearOpMode {
         System.out.printf(Locale.US,
                 "TURN_LOG: InputDeg=%.1f | ActualTicks=%d | ActualDeg=%.2f | OvershootDeg=%.2f%n",
                 degrees, actualTicks, actualDegrees, overshootDegrees);
+    }
+
+    private double interpolationMulti(int currentTick, int buffer, int ticks){
+        double powerMultiplier = 1.0;
+        //Ease In
+        if (currentTick <= buffer) {
+            powerMultiplier = (double)currentTick/buffer;
+        }
+        //Ease out
+        else if (currentTick > ticks-buffer) {
+            powerMultiplier = (double)(ticks-currentTick)/buffer;
+        }
+
+        return powerMultiplier > 1 ? 1 : powerMultiplier < 0 ? 0 : powerMultiplier;
     }
 
     /*Drive forward/backward for cmForward centimeters, and at the same time,
@@ -119,5 +126,4 @@ public class AutoCommon extends LinearOpMode {
         driveForNTicks(drivePower,strafePower,0,tick_count,motor);
 
     }
-
 }

@@ -1,29 +1,17 @@
 package edu.elon.robotics.JoseTools;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import edu.elon.robotics.autonomous.AutoCommon;
 
 public class DrivingInstruction extends AutoCommon {
-    private ArrayList<Runnable> instructions = new ArrayList<Runnable>();
-    private final double   SLOW_SPEED = 0.3;
-    private final double MEDIUM_SPEED = 0.65;
-    private final double   FAST_SPEED = 1.0;
-    private final long    SHORT_PAUSE = 500;
-    private final long     LONG_PAUSE = 1000;
-
+    private Queue<Runnable> instructions = new LinkedList<>();
     public DrivingInstruction(){
     }
 
-//    public void addInstruction(double drive, double strafe, double rotate, double power){
-//        instructions.add(new Instruction(drive, strafe, rotate, power));
-//    }
-
-    public void addInstruction(Runnable instruction){
-        instructions.add(instruction);
+    public void addInstruction(Runnable instruction){instructions.add(instruction);
     }
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,33 +23,49 @@ public class DrivingInstruction extends AutoCommon {
 
         // pause between initialization and run
         waitForStart();
+        runInstructions(Pause.SHORT.getPause());
 
+    }
+
+    private void runInstructions(long pauseInBetween){
         for (Runnable instruction : instructions){
-            performInstruction(instruction);
+            instruction.run();
             if (!opModeIsActive()) return;
-            sleep(SHORT_PAUSE);
+            sleep(pauseInBetween);
         }
     }
 
-//    public void performInstruction(Instruction instruction){
-//        turnAngle(instruction.ROTATE,instruction.POWER);
-//        driveDistance(instruction.DRIVE, instruction.STRAFE, instruction.POWER);
-//    }
+    protected static enum Speed {
+        SLOW(0.3),
+        MEDIUM(0.65),
+        FAST(1.0);
 
-    public void performInstruction(Runnable instruction){
-        instruction.run();
+        private final double value;
+
+        Speed(double value) {
+            this.value = value;
+        }
+
+        public double getSpeed() {
+            return value;
+        }
     }
 
-//    public static class Instruction{
-//        public double DRIVE;
-//        public double STRAFE;
-//        public double ROTATE;
-//        public double POWER;
-//        private Instruction(double drive, double strafe, double rotate, double power){
-//            DRIVE = drive;
-//            STRAFE = strafe;
-//            ROTATE = rotate;
-//            POWER = power;
-//        }
-// }
+    private enum Pause {
+        SHORT(500),
+        LONG(1000);
+
+        private final long milliseconds;
+
+        Pause(long milliseconds) {
+            this.milliseconds = milliseconds;
+        }
+
+        public long getPause() {
+            return milliseconds;
+        }
+    }
+
+
+
 }
