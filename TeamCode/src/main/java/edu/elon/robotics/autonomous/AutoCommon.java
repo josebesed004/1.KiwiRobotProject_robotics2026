@@ -4,6 +4,7 @@ package edu.elon.robotics.autonomous;
  * General autonomous methods.
  */
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,10 +13,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.Locale;
 
+import edu.elon.robotics.JoseTools.Interpolation;
 import edu.elon.robotics.hardware.KiwiBot;
 
-
+@Configurable
 public class AutoCommon extends LinearOpMode {
+
+    public final double percentInterpolate = 0.4;
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -38,10 +42,27 @@ public class AutoCommon extends LinearOpMode {
 
     protected void driveForNTicks(double drive, double strafe, double rotate, int ticks, DcMotor motor){
         robot.resetDriveEncoders();
-        robot.startMove(drive, strafe, rotate);
+        robot.startMove(0, 0, 0);
         // Wait the number of ticks
+        int buffer = (int) (ticks * percentInterpolate);
+        Interpolation interpolateStart = new Interpolation(0,buffer);
+        Interpolation interpolateEnd = new Interpolation(0,buffer);
+        float powerMultiplier = 1;
         while (opModeIsActive() && Math.abs(motor.getCurrentPosition()) < ticks) {
-            System.out.println(motor.getCurrentPosition());
+            int currentTick = (int) motor.getCurrentPosition();
+            currentTick = currentTick < 0 ? currentTick *-1 : currentTick;
+            if (currentTick <= buffer) {
+                powerMultiplier = (float) interpolateStart.next() / buffer;
+                System.out.println(powerMultiplier + "start");
+
+            }
+            else if (currentTick > ticks-buffer) {
+                System.out.println(powerMultiplier + "end");
+                powerMultiplier = 1 - ((float) interpolateEnd.next() / buffer);
+            }
+            else powerMultiplier = 1;
+            System.out.println("Buffer: "+buffer+", powerMult: "+powerMultiplier+", current tick = "+currentTick);
+            robot.startMove(drive * powerMultiplier, strafe * powerMultiplier, rotate * powerMultiplier);
         }
         robot.stopMove();
     }
