@@ -37,7 +37,7 @@ public class DrivingInstruction extends AutoCommon {
 
     protected static enum Speed {
         SLOW(0.3),
-        MEDIUM(0.65),
+        MEDIUM(0.56),
         FAST(1.0);
 
         private final double value;

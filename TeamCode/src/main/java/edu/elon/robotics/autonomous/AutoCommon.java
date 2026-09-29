@@ -19,7 +19,8 @@ import edu.elon.robotics.hardware.KiwiBot;
 @Configurable
 public class AutoCommon extends LinearOpMode {
 
-    public final double percentInterpolate = 0.4;
+    public static double percentInterpolate = 0.20;
+    public static double minimumSpeed = 0.2;
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -91,8 +92,9 @@ public class AutoCommon extends LinearOpMode {
         else if (currentTick > ticks-buffer) {
             powerMultiplier = (double)(ticks-currentTick)/buffer;
         }
+        System.out.println(powerMultiplier + "[POWER]");
 
-        return powerMultiplier > 1 ? 1 : powerMultiplier < 0 ? 0 : powerMultiplier;
+        return powerMultiplier > 1 ? 1 : Math.max(powerMultiplier, minimumSpeed);
     }
 
     /*Drive forward/backward for cmForward centimeters, and at the same time,
@@ -125,5 +127,16 @@ public class AutoCommon extends LinearOpMode {
 
         driveForNTicks(drivePower,strafePower,0,tick_count,motor);
 
+    }
+
+    protected void driveHeading(double cmDistance,
+                                double angleHeading,
+                                double maxPower){
+        //Convert angle to radians
+        angleHeading = angleHeading * (2*Math.PI/360);
+        double sideDistance = Math.sin(angleHeading)*cmDistance*-1;
+        double forwardDistance = Math.cos(angleHeading)*cmDistance;
+
+        driveDistance(forwardDistance,sideDistance,maxPower);
     }
 }
