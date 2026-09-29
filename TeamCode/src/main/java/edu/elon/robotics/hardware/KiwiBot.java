@@ -15,9 +15,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class KiwiBot {
 
     public final double TICKS_PER_ROTATION = 537.7;
-    public final double WHEEL_CIRCUMFERENCE = 30.1593;
+    public static double WHEEL_CIRCUMFERENCE = 29.8;
     public final double TICKS_PER_CM = TICKS_PER_ROTATION / WHEEL_CIRCUMFERENCE;
-    public static double TURNING_DIAMETER_CM = 29.5; //tested value - accurate to 1-2 degrees of rotation
+//    public final double TICKS_PER_CM = 200.0/10;
+//    public final double WHEEL_CIRCUMFERENCE = TICKS_PER_ROTATION/TICKS_PER_CM;
+    public static double TURNING_DIAMETER_CM = 29.51; //tested value - accurate to 1-2 degrees of rotation
     public final double TURNING_CIRCLE = Math.PI * TURNING_DIAMETER_CM; // Diameter times pi
 
     // drivebase motors

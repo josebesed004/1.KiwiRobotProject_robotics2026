@@ -13,10 +13,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import java.util.Locale;
 
+import edu.elon.robotics.JoseTools.Interpolation;
 import edu.elon.robotics.hardware.KiwiBot;
 
 @Configurable
 public class AutoCommon extends LinearOpMode {
+
+    public static double percentInterpolate = 0.20;
+    public static double minimumSpeed = 0.2;
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -41,11 +45,21 @@ public class AutoCommon extends LinearOpMode {
     }
 
     protected void driveForNTicks(double drive, double strafe, double rotate, int ticks, DcMotor motor){
+        ticks = Math.abs(ticks);
         robot.resetDriveEncoders();
-        robot.startMove(drive, strafe, rotate);
         // Wait the number of ticks
+        int buffer = Math.max((int) (ticks * percentInterpolate), 1);
+
+        double powerMultiplier = 1;
+
         while (opModeIsActive() && Math.abs(motor.getCurrentPosition()) < ticks) {
-            System.out.println(motor.getCurrentPosition());
+            int currentTick = motor.getCurrentPosition();
+
+            currentTick = currentTick < 0 ? currentTick *-1 : currentTick;
+
+            powerMultiplier = interpolationMulti(currentTick, buffer, ticks);
+
+            robot.startMove(drive * powerMultiplier, strafe * powerMultiplier, rotate * powerMultiplier);
         }
         robot.stopMove();
     }
@@ -71,32 +85,19 @@ public class AutoCommon extends LinearOpMode {
                 degrees, actualTicks, actualDegrees, overshootDegrees);
     }
 
-    protected void rampUP(int maxTicks, double maxPower, DcMotor motor){
-        motor.setPower(BASE_POWER);
-        int MOTOR_START_POS = motor.getCurrentPosition();
-        double ACCELERATION = ((maxPower - BASE_POWER)/RAMP_TICKS);
-
-        if (maxTicks < 2 * RAMP_TICKS){
-            ACCELERATION = ((maxPower - BASE_POWER)/(maxTicks/2));
+    private double interpolationMulti(int currentTick, int buffer, int ticks){
+        double powerMultiplier = 1.0;
+        //Ease In
+        if (currentTick <= buffer) {
+            powerMultiplier = (double)currentTick/buffer;
         }
-
-        while (motor.getCurrentPosition() - MOTOR_START_POS < RAMP_TICKS && motor.getCurrentPosition() - MOTOR_START_POS < maxTicks/2 && motor.getPower() < maxPower){
-            motor.setPower(motor.getPower() + ACCELERATION);
+        //Ease out
+        else if (currentTick > ticks-buffer) {
+            powerMultiplier = (double)(ticks-currentTick)/buffer;
         }
-    }
+        System.out.println(powerMultiplier + "[POWER]");
 
-    protected void rampDown(int maxTicks, double maxPower, DcMotor motor){
-        motor.setPower(maxPower);
-        int MOTOR_START_POS = motor.getCurrentPosition();
-        double ACCELERATION = ((maxPower - BASE_POWER)/RAMP_TICKS);
-
-        if (maxTicks < 2 * RAMP_TICKS){
-            ACCELERATION = ((maxPower - BASE_POWER)/(maxTicks/2));
-        }
-
-        while (motor.getCurrentPosition() - MOTOR_START_POS < RAMP_TICKS && motor.getCurrentPosition() - MOTOR_START_POS < maxTicks/2 && motor.getPower() < maxPower){
-            motor.setPower(motor.getPower() - ACCELERATION);
-        }
+        return powerMultiplier > 1 ? 1 : Math.max(powerMultiplier, minimumSpeed);
     }
 
     /*Drive forward/backward for cmForward centimeters, and at the same time,
@@ -131,4 +132,14 @@ public class AutoCommon extends LinearOpMode {
 
     }
 
+    protected void driveHeading(double cmDistance,
+                                double angleHeading,
+                                double maxPower){
+        //Convert angle to radians
+        angleHeading = angleHeading * (2*Math.PI/360);
+        double sideDistance = Math.sin(angleHeading)*cmDistance*-1;
+        double forwardDistance = Math.cos(angleHeading)*cmDistance;
+
+        driveDistance(forwardDistance,sideDistance,maxPower);
+    }
 }
