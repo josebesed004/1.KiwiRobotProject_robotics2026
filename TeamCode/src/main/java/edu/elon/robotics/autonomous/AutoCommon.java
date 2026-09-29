@@ -7,7 +7,6 @@ package edu.elon.robotics.autonomous;
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -106,31 +105,57 @@ public class AutoCommon extends LinearOpMode {
     Negative values will do the opposite. maxPower will limit the overall speed.*/
     protected void driveDistance(double cmForward,
                                  double cmSide,
-                                 double maxPower){
+                                 double maxPower) {
 
-        double distance = Math.sqrt(Math.pow(cmForward,2) + Math.pow(cmSide,2));
-        double drivePower = maxPower * cmForward/distance;
-        double strafePower = maxPower * cmSide/distance;
+        double distance = Math.hypot(cmForward, cmSide);
 
-        int LR_Tick_Count = Math.abs((int)(robot.LR_TICKS_PER_SIDE_CM*cmSide));
-        LR_Tick_Count += Math.abs((int)(robot.LR_TICKS_PER_FWD_CM*cmForward));
-        int AUX_tick_count = Math.abs((int) (robot.AUX_TICKS_PER_SIDE_CM * cmSide));
+        if (distance == 0) {
+            return;
+        }
+
+        double drivePower = maxPower * cmForward / distance;
+        double strafePower = maxPower * cmSide / distance;
+
+        double leftTicks =
+                cmForward * robot.LR_TICKS_PER_FWD_CM +
+                        cmSide * robot.LR_TICKS_PER_SIDE_CM;
+
+        double rightTicks =
+                cmForward * robot.LR_TICKS_PER_FWD_CM -
+                        cmSide * robot.LR_TICKS_PER_SIDE_CM;
+
+        double auxTicks =
+                cmSide * robot.AUX_TICKS_PER_SIDE_CM;
+
+        double absLeft = Math.abs(leftTicks);
+        double absRight = Math.abs(rightTicks);
+        double absAux = Math.abs(auxTicks);
 
         DcMotor motor;
-        int tick_count;
-        if (LR_Tick_Count > AUX_tick_count){
-            // Choose left motor when driving right and right motor when driving left
-            motor = cmSide > 0 ? robot.motorLeft : robot.motorRight;
-            tick_count = LR_Tick_Count;
+        int tickCount;
+
+        if (absLeft >= absRight && absLeft >= absAux) {
+            motor = robot.motorLeft;
+            tickCount = (int) absLeft;
         }
-        else{
+        else if (absRight >= absLeft && absRight >= absAux) {
+            motor = robot.motorRight;
+            tickCount = (int) absRight;
+        }
+        else {
             motor = robot.motorAux;
-            tick_count = AUX_tick_count;
+            tickCount = (int) absAux;
         }
 
-        driveForNTicks(drivePower,strafePower,0,tick_count,motor);
-
+        driveForNTicks(
+                drivePower,
+                strafePower,
+                0,
+                tickCount,
+                motor
+        );
     }
+
 
     protected void driveHeading(double cmDistance,
                                 double angleHeading,

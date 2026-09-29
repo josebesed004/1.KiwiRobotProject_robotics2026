@@ -1,9 +1,11 @@
-package edu.elon.robotics.JoseTools;
+package edu.elon.robotics.autonomous.Lab4;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import edu.elon.robotics.JoseTools.DrivingInstruction;
+
 @Autonomous(name="PatternDriving_challenge", group="Lab4")
-public class PatternDriving_Challenge extends DrivingInstruction{
+public class PatternDriving_Challenge extends DrivingInstruction {
     public PatternDriving_Challenge(){
         double speed = Speed.SLOW.getSpeed();
 

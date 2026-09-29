@@ -7,9 +7,11 @@ package edu.elon.robotics.hardware;
  */
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
 @Configurable
 public class KiwiBot {
@@ -37,6 +39,9 @@ public class KiwiBot {
     public final double LR_TICKS_PER_SIDE_CM = TICKS_PER_CM * Math.cos(Math.PI / 3.0);
     public final double AUX_TICKS_PER_SIDE_CM = TICKS_PER_CM;
 
+    // control hub imu
+    public IMU imu;
+
     public KiwiBot(HardwareMap hardwareMap, boolean isAuto) {
 
         // access the motors defined in the configuration
@@ -61,6 +66,31 @@ public class KiwiBot {
 
         // choose a ratio based on the isAuto boolean
         ratio = new KiwiDriveRatio(isAuto);
+
+        /*
+         * Define the orientation of the Control (and the IMU inside).
+         */
+
+        // the logo on the control hub is pointed up toward the sky
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
+                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+
+        // the usb on the control hub is pointed up toward the forward
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  =
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+
+        // set this orientation
+        RevHubOrientationOnRobot orientationOnRobot = new
+                RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // now initialize the IMU with this mounting orientation
+        // this assumes the IMU to be in a REV Control Hub is named "imu"
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+
+        // define the current direction as 0
+        imu.resetYaw();
+
     }
 
     public void resetDriveEncoders() {
