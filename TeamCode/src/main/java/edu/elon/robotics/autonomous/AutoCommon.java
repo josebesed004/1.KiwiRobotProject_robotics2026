@@ -27,6 +27,7 @@ public class AutoCommon extends LinearOpMode {
     public static int RAMP_TICKS = 1000;
 
     public static double BASE_POWER = 0.10;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new KiwiBot(hardwareMap, true);
@@ -99,6 +100,8 @@ public class AutoCommon extends LinearOpMode {
         return powerMultiplier > 1 ? 1 : Math.max(powerMultiplier, minimumSpeed);
     }
 
+
+
     /*Drive forward/backward for cmForward centimeters, and at the same time,
     strafe left/right for cmSide centimeters.
     A positive cmForward value will drive forward and a positive cmSide value will go to the right.
@@ -166,5 +169,12 @@ public class AutoCommon extends LinearOpMode {
         double forwardDistance = Math.cos(angleHeading)*cmDistance;
 
         driveDistance(forwardDistance,sideDistance,maxPower);
+    }
+
+    protected void turnIMU(double degrees, double power){
+        robot.imu.resetYaw();
+        power = Math.abs(power);
+        turnAngle(degrees, power);
+        robot.stopMove();
     }
 }
