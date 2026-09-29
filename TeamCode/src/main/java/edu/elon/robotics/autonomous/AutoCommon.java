@@ -25,6 +25,9 @@ public class AutoCommon extends LinearOpMode {
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
+    public static int RAMP_TICKS = 1000;
+
+    public static double BASE_POWER = 0.10;
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new KiwiBot(hardwareMap, true);
