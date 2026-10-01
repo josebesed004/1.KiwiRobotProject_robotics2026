@@ -20,6 +20,7 @@ public class AutoCommon extends LinearOpMode {
 
     public static double percentInterpolate = 0.20;
     public static double minimumSpeed = 0.2;
+    public static double degreeOvershoot = -3;
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -174,7 +175,29 @@ public class AutoCommon extends LinearOpMode {
     protected void turnIMU(double degrees, double power){
         robot.imu.resetYaw();
         power = Math.abs(power);
-        turnAngle(degrees, power);
+        if (degrees > 0) power = -power;
+
+        robot.startMove(0, 0, power);
+
+        double stopDegrees = degrees + 180;
+        stopDegrees = stopDegrees%360;
+        stopDegrees = stopDegrees - 180;
+
+        System.out.printf("[Turning_IMULOG] current degree: %f.2, target degree: %f.2\n"
+                , robot.getHeading(), degrees);
+
+        if (degrees > 0) {
+            while (robot.getHeading() < degrees + degreeOvershoot) {
+                System.out.printf("[Turning_IMULOG] current degree: %f.2, target degree: %f.2\n"
+                        , robot.getHeading(), degrees);
+            }
+        } else if (degrees < 0) {
+            while (robot.getHeading() > degrees - degreeOvershoot) {
+                System.out.printf("[Turning_IMULOG] current degree: %f.2, target degree: %f.2\n"
+                        , robot.getHeading(), degrees);
+            }
+        }
+
         robot.stopMove();
     }
 }

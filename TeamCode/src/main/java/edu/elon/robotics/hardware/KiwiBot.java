@@ -137,4 +137,8 @@ public class KiwiBot {
         return (distance / TURNING_CIRCLE) * 360.0;
     }
 
+    public double getHeading(){
+        return imu.getRobotYawPitchRollAngles().getYaw();
+    }
+
 }

@@ -8,14 +8,21 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import edu.elon.robotics.autonomous.AutoCommon;
 
 
-@Autonomous(name="imu Test", group = "labs")
+@Autonomous(name="Imu Test", group = "Labs")
 public class IMUTest extends AutoCommon {
     @Override
     public void runOpMode() throws InterruptedException {
         super.runOpMode();
         waitForStart();
+        int timesCalled = 0;
 
+        robot.imu.resetYaw();
         while (opModeIsActive()) {
+
+            System.out.print(
+                    "[JoseTest]:And now we are inside the loop, so we should be looping\n"
+            );
+
             // You need to call this to fill the robotOrientation object
             // This needs to be done each time you want a new reading
             // which is why it is called inside the loop.
@@ -27,7 +34,8 @@ public class IMUTest extends AutoCommon {
             // This needs to be done each time you want a new reading and after
             //    robotOrientation = robot.imu.getRobotYawPitchRollAngles();
             // They will not update by themselves
-            double yaw   = robotOrientation.getYaw(AngleUnit.DEGREES);
+            double yaw   = robot.getHeading();
+
             double pitch = robotOrientation.getPitch(AngleUnit.DEGREES);
             double roll  = robotOrientation.getRoll(AngleUnit.DEGREES);
 
@@ -35,6 +43,18 @@ public class IMUTest extends AutoCommon {
             telemetry.addData("pitch", pitch);
             telemetry.addData("yaw", yaw);
             telemetry.update();
+
+            System.out.printf(
+                    "[ANGLES]:yaw=%f.2, pitch=%f.2, roll=%f.2, called=%d",
+                    yaw, pitch, roll, timesCalled++
+            );
+            System.out.printf(
+                    "[ANGLES]:RobotYAWPitchRoll: %s",
+                    robotOrientation.toString()
+            );
+
+//            turnAngle(10,0.5);
+//            sleep(1000);
         }
     }
 }
