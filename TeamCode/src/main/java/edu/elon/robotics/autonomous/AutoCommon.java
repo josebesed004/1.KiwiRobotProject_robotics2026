@@ -9,6 +9,9 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
 
 import java.util.Locale;
 
@@ -20,7 +23,6 @@ public class AutoCommon extends LinearOpMode {
 
     public static double percentInterpolate = 0.20;
     public static double minimumSpeed = 0.2;
-    public static double degreeOvershoot = -3;
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -28,6 +30,8 @@ public class AutoCommon extends LinearOpMode {
     public static int RAMP_TICKS = 1000;
 
     public static double BASE_POWER = 0.10;
+
+    public static double ANGLE_OVERSHOOT = 2;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -172,32 +176,47 @@ public class AutoCommon extends LinearOpMode {
         driveDistance(forwardDistance,sideDistance,maxPower);
     }
 
+    /**
+     * Turns the robot in place by a specified angle in degrees using IMU feedback.
+     * Positive degrees turn counter-clockwise; negative degrees turn clockwise.
+     *
+     * @param degrees The target rotation angle (e.g. +90, -180, +200, +720).
+     * @param power   The speed at which to turn (magnitude, always positive).
+     */
     protected void turnIMU(double degrees, double power){
         robot.imu.resetYaw();
         power = Math.abs(power);
-        if (degrees > 0) power = -power;
 
-        robot.startMove(0, 0, power);
+        // Reduce requested angle to range of -360 to 360
+        double target_angle = degrees % 360.0;
+        if (target_angle == 0) return;
 
-        double stopDegrees = degrees + 180;
-        stopDegrees = stopDegrees%360;
-        stopDegrees = stopDegrees - 180;
+        // Determine turning direction (positive = counterclockwise, negative = clockwise)
+        double turnPower = target_angle < 0 ? -power : power;
+        double prev_heading = robot.getHeading(); // 0.0 right after resetYaw()
+        double angle_turned = 0.0;
 
-        System.out.printf("[Turning_IMULOG] current degree: %f.2, target degree: %f.2\n"
-                , robot.getHeading(), degrees);
+        // Begin turning in place
+        robot.startMove(0, 0, turnPower);
 
-        if (degrees > 0) {
-            while (robot.getHeading() < degrees + degreeOvershoot) {
-                System.out.printf("[Turning_IMULOG] current degree: %f.2, target degree: %f.2\n"
-                        , robot.getHeading(), degrees);
+        // Turn loop: continues until accumulated turn reaches target minus angle overshoot
+        while(opModeIsActive() && angle_turned < Math.abs(target_angle) - ANGLE_OVERSHOOT) {
+            double current_heading = robot.getHeading();
+            double angle_delta = current_heading - prev_heading;
+
+            // Handle IMU boundary wrap between -180° and +180°
+            if (angle_delta < -180.0) {
+                angle_delta += 360.0;
+            } else if (angle_delta > 180.0) {
+                angle_delta -= 360.0;
             }
-        } else if (degrees < 0) {
-            while (robot.getHeading() > degrees - degreeOvershoot) {
-                System.out.printf("[Turning_IMULOG] current degree: %f.2, target degree: %f.2\n"
-                        , robot.getHeading(), degrees);
-            }
+
+            //add up the amount turned
+            angle_turned += Math.abs(angle_delta);
+            prev_heading = current_heading;
         }
 
+        // Stop all drive motors when turn complete
         robot.stopMove();
     }
 }

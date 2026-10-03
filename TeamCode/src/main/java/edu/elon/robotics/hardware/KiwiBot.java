@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 @Configurable
 public class KiwiBot {
 
@@ -138,7 +140,8 @@ public class KiwiBot {
     }
 
     public double getHeading(){
-        return imu.getRobotYawPitchRollAngles().getYaw();
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
     }
+
 
 }
