@@ -13,7 +13,7 @@ public class IMUDriveTesting extends DrivingInstruction {
     public static double power = 0.3;
     public IMUDriveTesting(){
         addInstruction(() -> driveIMU(driveCM, power));
-        addInstruction(() -> sleep(2*1000));
+        addInstruction(() -> sleep(5*1000));
         addInstruction(() -> driveIMU(-driveCM, power));
         System.out.println("[Dribing_IMULOG]: Instructions added\n");
     }

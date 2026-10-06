@@ -19,7 +19,7 @@ import edu.elon.robotics.hardware.KiwiBot;
 public class AutoCommon extends LinearOpMode {
 
     public static double percentInterpolate = 0.20;
-    public static double minimumSpeed = 0.2;
+    public static double MINIMUM_SPEED = 0.2;
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -29,7 +29,8 @@ public class AutoCommon extends LinearOpMode {
     public static double BASE_POWER = 0.10;
 
     public static double ANGLE_OVERSHOOT_IMU_ROTATE = 2.5;
-    public static double ANGLE_OVERSHOOT_IMU_DRIVE = 1;
+    public static double ANGLE_OVERSHOOT_IMU_DRIVE = 1.1;
+    public static double DRIVE_CORRECTION = 0.06;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -100,7 +101,7 @@ public class AutoCommon extends LinearOpMode {
         }
         System.out.println(powerMultiplier + "[POWER]");
 
-        return powerMultiplier > 1 ? 1 : Math.max(powerMultiplier, minimumSpeed);
+        return powerMultiplier > 1 ? 1 : Math.max(powerMultiplier, MINIMUM_SPEED);
     }
 
 
@@ -228,15 +229,12 @@ public class AutoCommon extends LinearOpMode {
         robot.startMove(power,0,0);
 
         double ticks_to_travel = cm * robot.LR_TICKS_PER_FWD_CM;
-        double correction_multiplier;
-        double correct_constant = 0.05;
         double final_correction;
-        while(opModeIsActive() && Math.abs(robot.motorLeft.getCurrentPosition()) < Math.abs(ticks_to_travel)){
-
-            correction_multiplier = Math.abs(robot.getHeading()) / 6;
-            final_correction = correction_multiplier * correct_constant;
-            final_correction = Math.min(1,final_correction);
-            final_correction = Math.max(0.05, final_correction);
+        while(opModeIsActive() &&
+                (robot.isTicksLessThan(robot.motorLeft, ticks_to_travel)
+                || robot.isTicksLessThan(robot.motorRight, ticks_to_travel))
+        ){
+            final_correction = calculateCorrection(robot.getHeading());
 
             if(robot.getHeading() > ANGLE_OVERSHOOT_IMU_DRIVE){
                 robot.motorAux.setPower(final_correction);
@@ -250,7 +248,21 @@ public class AutoCommon extends LinearOpMode {
             }
         }
         robot.stopMove();
+    }
 
+    final double calculateCorrection(double degreesOff){
+        double multiplyPerDegree = 3;
+        double correctionMultiplier = Math.abs(degreesOff / multiplyPerDegree);
+        double correction = DRIVE_CORRECTION * correctionMultiplier;
 
+        correction = Math.min(1, (Math.max(MINIMUM_SPEED, correction)));
+
+        return correction;
+    }
+
+    protected void driveUntilTouch(double power){
+        robot.startMove(power,0,0);
+        while (!robot.touchSensor.isPressed()){}
+        robot.stopMove();
     }
 }

@@ -8,8 +8,9 @@ package edu.elon.robotics.hardware;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import com.qualcomm.hardware.rev.RevTouchSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -43,6 +44,10 @@ public class KiwiBot {
 
     // control hub imu
     public IMU imu;
+
+    // sensors
+    public RevTouchSensor touchSensor;
+    public ColorSensor colorSensor;
 
     public KiwiBot(HardwareMap hardwareMap, boolean isAuto) {
 
@@ -93,6 +98,10 @@ public class KiwiBot {
         // define the current direction as 0
         imu.resetYaw();
 
+        // external sensors
+        touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
+        colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+
     }
 
     public void resetDriveEncoders() {
@@ -141,6 +150,14 @@ public class KiwiBot {
 
     public double getHeading(){
         return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
+    }
+
+    /*Takes in a motor and a number of ticks to compare to
+    then returns true or false depending if the number is bigger or not
+    based on the absolute value of both components
+    * */
+    public boolean isTicksLessThan(DcMotor motor, double greaterTicks){
+        return Math.abs(motor.getCurrentPosition()) < Math.abs(greaterTicks);
     }
 
 
