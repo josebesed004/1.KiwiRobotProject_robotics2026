@@ -219,25 +219,31 @@ public class AutoCommon extends LinearOpMode {
     }
 
     protected void driveIMU(double cm, double power){
-        double kp = 0.0;
         robot.imu.resetYaw();
         robot.resetDriveEncoders();
 
         power = Math.abs(power);
         if(cm < 0) power = -power;
-        System.out.printf("[IMU_DRIVE_TEST] power = %.2f \n",power);
+
         robot.startMove(power,0,0);
+
         double ticks_to_travel = cm * robot.LR_TICKS_PER_FWD_CM;
-        while(opModeIsActive() &&
-                Math.abs(robot.motorLeft.getCurrentPosition()) < Math.abs(ticks_to_travel)){
-            kp = robot.getHeading()/90;
+        double correction_multiplier;
+        double correct_constant = 0.05;
+        double final_correction;
+        while(opModeIsActive() && Math.abs(robot.motorLeft.getCurrentPosition()) < Math.abs(ticks_to_travel)){
+
+            correction_multiplier = Math.abs(robot.getHeading()) / 6;
+            final_correction = correction_multiplier * correct_constant;
+            final_correction = Math.min(1,final_correction);
+            final_correction = Math.max(0.05, final_correction);
+
             if(robot.getHeading() > ANGLE_OVERSHOOT_IMU_DRIVE){
-                robot.motorAux.setPower(0.05);
+                robot.motorAux.setPower(final_correction);
 
             }
             else if(robot.getHeading() < -ANGLE_OVERSHOOT_IMU_DRIVE){
-                robot.motorAux.setPower(-0.05);
-
+                robot.motorAux.setPower(-final_correction);
             }
             else{
                 robot.motorAux.setPower(0);
