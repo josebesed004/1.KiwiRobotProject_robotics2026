@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import edu.elon.robotics.autonomous.AutoCommon;
 
 
-@Autonomous(name="Imu Test", group = "Labs")
+@Autonomous(name="Imu Test print statements", group = "Lab5")
 public class IMUTest extends AutoCommon {
     @Override
     public void runOpMode() throws InterruptedException {

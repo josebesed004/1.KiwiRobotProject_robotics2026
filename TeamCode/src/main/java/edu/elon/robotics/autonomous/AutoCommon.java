@@ -9,13 +9,10 @@ import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 
 import java.util.Locale;
 
-import edu.elon.robotics.JoseTools.Interpolation;
 import edu.elon.robotics.hardware.KiwiBot;
 
 @Configurable
@@ -31,7 +28,8 @@ public class AutoCommon extends LinearOpMode {
 
     public static double BASE_POWER = 0.10;
 
-    public static double ANGLE_OVERSHOOT = 2;
+    public static double ANGLE_OVERSHOOT_IMU_ROTATE = 2.5;
+    public static double ANGLE_OVERSHOOT_IMU_DRIVE = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -200,7 +198,7 @@ public class AutoCommon extends LinearOpMode {
         robot.startMove(0, 0, turnPower);
 
         // Turn loop: continues until accumulated turn reaches target minus angle overshoot
-        while(opModeIsActive() && angle_turned < Math.abs(target_angle) - ANGLE_OVERSHOOT) {
+        while(opModeIsActive() && angle_turned < Math.abs(target_angle) - ANGLE_OVERSHOOT_IMU_ROTATE) {
             double current_heading = robot.getHeading();
             double angle_delta = current_heading - prev_heading;
 
@@ -218,5 +216,35 @@ public class AutoCommon extends LinearOpMode {
 
         // Stop all drive motors when turn complete
         robot.stopMove();
+    }
+
+    protected void driveIMU(double cm, double power){
+        double kp = 0.0;
+        robot.imu.resetYaw();
+        robot.resetDriveEncoders();
+
+        power = Math.abs(power);
+        if(cm < 0) power = -power;
+        System.out.printf("[IMU_DRIVE_TEST] power = %.2f \n",power);
+        robot.startMove(power,0,0);
+        double ticks_to_travel = cm * robot.LR_TICKS_PER_FWD_CM;
+        while(opModeIsActive() &&
+                Math.abs(robot.motorLeft.getCurrentPosition()) < Math.abs(ticks_to_travel)){
+            kp = robot.getHeading()/90;
+            if(robot.getHeading() > ANGLE_OVERSHOOT_IMU_DRIVE){
+                robot.motorAux.setPower(0.05);
+
+            }
+            else if(robot.getHeading() < -ANGLE_OVERSHOOT_IMU_DRIVE){
+                robot.motorAux.setPower(-0.05);
+
+            }
+            else{
+                robot.motorAux.setPower(0);
+            }
+        }
+        robot.stopMove();
+
+
     }
 }

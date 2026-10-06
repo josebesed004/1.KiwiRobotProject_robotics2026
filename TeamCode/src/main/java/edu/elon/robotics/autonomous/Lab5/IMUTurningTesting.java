@@ -7,7 +7,7 @@ import edu.elon.robotics.JoseTools.DrivingInstruction;
 
 
 @Configurable
-@Autonomous(name="Imu Test", group = "Labs")
+@Autonomous(name="Imu Test turning", group = "Lab5")
 public class IMUTurningTesting extends DrivingInstruction {
     public static double degreesIMU = 200;
     public IMUTurningTesting(){
