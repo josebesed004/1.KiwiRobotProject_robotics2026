@@ -262,7 +262,7 @@ public class AutoCommon extends LinearOpMode {
 
     protected void driveUntilTouch(double power){
         robot.startMove(power,0,0);
-        while (!robot.touchSensor.isPressed()){}
+        while (!robot.touchSensor.isPressed());
         robot.stopMove();
     }
 }
