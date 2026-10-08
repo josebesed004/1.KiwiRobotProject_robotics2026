@@ -49,6 +49,9 @@ public class KiwiBot {
     public RevTouchSensor touchSensor;
     public ColorSensor colorSensor;
 
+    public int maxBrightness;
+    public int minBrightness;
+
     public KiwiBot(HardwareMap hardwareMap, boolean isAuto) {
 
         // access the motors defined in the configuration

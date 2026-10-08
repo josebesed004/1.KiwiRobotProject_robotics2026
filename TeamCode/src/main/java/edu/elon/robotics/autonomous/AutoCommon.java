@@ -265,4 +265,40 @@ public class AutoCommon extends LinearOpMode {
         while (!robot.touchSensor.isPressed());
         robot.stopMove();
     }
+
+    protected void colorTesting(boolean lightOn){
+        robot.colorSensor.enableLed(lightOn);
+        int red = robot.colorSensor.red();
+        int green = robot.colorSensor.green();
+        int blue = robot.colorSensor.blue();
+        int alpha = robot.colorSensor.alpha();
+        int argb = robot.colorSensor.argb();
+
+        System.out.printf("[ColorTestingTest]: Red = %d, Blue = %d, Green = %d, alpha= %d, argb= %d\n"
+                ,red, blue, green,alpha,argb);
+    }
+
+    protected void driveToCalibrateLightSensor(){
+        robot.resetDriveEncoders();
+        robot.startMove(0.25,0,0);
+        double ticks = Math.abs(robot.convertDistanceToTicks(20));
+
+        robot.minBrightness = robot.colorSensor.alpha();
+        robot.maxBrightness = robot.minBrightness;
+        while (opModeIsActive() && Math.abs(robot.motorLeft.getCurrentPosition()) < ticks){
+            System.out.println("Color Sensor Alpha: " + robot.colorSensor.alpha());
+            if (robot.colorSensor.alpha() < robot.minBrightness){
+                robot.minBrightness = robot.colorSensor.alpha();
+            }
+            if (robot.colorSensor.alpha() > robot.maxBrightness){
+                robot.maxBrightness = robot.colorSensor.alpha();
+            }
+
+        }
+        robot.stopMove();
+        System.out.printf("[ColorCalibration]: Max brightness = %d, Min brightness = %d\n", robot.maxBrightness, robot.minBrightness);
+
+    }
+
+
 }
