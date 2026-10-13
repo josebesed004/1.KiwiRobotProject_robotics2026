@@ -9,6 +9,7 @@ import edu.elon.robotics.autonomous.AutoCommon;
 @Autonomous(name="Counting Lines", group = "Lab6")
 public class CountingLines extends AutoCommon {
 
+    public static double threshold_modifier = 0.5;
     enum Linestate {ON_LINE, NOT_ON_LINE}
 
     @Override
@@ -18,7 +19,8 @@ public class CountingLines extends AutoCommon {
         waitForStart();
         driveToCalibrateLightSensor();
 
-        double brightness_threshold = (robot.minBrightness + robot.maxBrightness) / 2.0;
+        double brightness_threshold = (robot.maxBrightness - robot.minBrightness) * threshold_modifier;
+        brightness_threshold += robot.minBrightness;
 
         int LINE_COUNT = 0;
         Linestate state;
@@ -30,29 +32,25 @@ public class CountingLines extends AutoCommon {
         }
 
         robot.resetDriveEncoders();
-        robot.startMove(0.3, 0, 0);
-
+        robot.startMove(0.05, 0, 0);
         while (opModeIsActive() && robot.touchSensor.isPressed() == false) {
             if (robot.colorSensor.alpha() > brightness_threshold && state == Linestate.NOT_ON_LINE) {
                 LINE_COUNT += 1;
                 state = Linestate.ON_LINE;
+                System.out.println("Linestate: " + state);
             } else if (robot.colorSensor.alpha() < brightness_threshold) {
                 state = Linestate.NOT_ON_LINE;
+                System.out.println("Linestate: " + state);
             }
+            System.out.println("Linecount: " + LINE_COUNT);
         }
         robot.stopMove();
 
         int ticksDriven = Math.abs(robot.motorLeft.getCurrentPosition());
         double distanceCM = ticksDriven / robot.LR_TICKS_PER_FWD_CM + 20.0;
 
-        driveDistance(-distanceCM, 0, 0.3);
+        driveDistance(-distanceCM, 0, 0.05);
 
-        telemetry.addData("Lines Counted", LINE_COUNT);
-        telemetry.addData("Distance Traveled (cm)", distanceCM);
-        telemetry.update();
 
-        while (opModeIsActive()) {
-            // Keep telemetry displayed until OpMode stops
-        }
     }
 }
