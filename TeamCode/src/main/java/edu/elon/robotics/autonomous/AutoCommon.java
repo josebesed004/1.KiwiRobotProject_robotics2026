@@ -300,5 +300,6 @@ public class AutoCommon extends LinearOpMode {
 
     }
 
+    public void
 
 }

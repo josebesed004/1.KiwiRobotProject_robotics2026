@@ -6,7 +6,10 @@ package edu.elon.robotics.hardware;
  *  @author J. Hollingsworth and K. Altmann
  */
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.hardware.ColorSensor;
@@ -51,6 +54,8 @@ public class KiwiBot {
 
     public int maxBrightness;
     public int minBrightness;
+
+    public Rev2mDistanceSensor distanceSensor;
 
     public KiwiBot(HardwareMap hardwareMap, boolean isAuto) {
 
@@ -104,6 +109,7 @@ public class KiwiBot {
         // external sensors
         touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
+        distanceSensor = hardwareMap.get(Rev2mDistanceSensor .class, "distanceSensor");
 
     }
 
@@ -162,6 +168,10 @@ public class KiwiBot {
     public boolean isTicksLessThan(DcMotor motor, double greaterTicks){
         return Math.abs(motor.getCurrentPosition()) < Math.abs(greaterTicks);
     }
+
+
+
+
 
 
 }
