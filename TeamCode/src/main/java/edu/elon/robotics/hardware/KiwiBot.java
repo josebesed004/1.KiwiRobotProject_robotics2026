@@ -168,10 +168,4 @@ public class KiwiBot {
     public boolean isTicksLessThan(DcMotor motor, double greaterTicks){
         return Math.abs(motor.getCurrentPosition()) < Math.abs(greaterTicks);
     }
-
-
-
-
-
-
 }

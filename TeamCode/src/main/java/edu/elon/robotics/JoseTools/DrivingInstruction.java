@@ -13,6 +13,10 @@ public class DrivingInstruction extends AutoCommon {
     public void addInstruction(Runnable instruction){instructions.add(instruction);
     }
 
+    public void resetInstructions(){
+        instructions.clear();
+    }
+
     @Override
     public void runOpMode() throws InterruptedException {
 
