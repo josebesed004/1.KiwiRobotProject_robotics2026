@@ -97,6 +97,7 @@ public class AutoCommon extends LinearOpMode {
     }
 
     public void drive(BooleanSupplier condition, Runnable insideTheLoop){
+        robot.imu.resetYaw();
         robot.resetDriveEncoders();
         while (condition.getAsBoolean() && opModeIsActive()){
             insideTheLoop.run();
@@ -258,32 +259,37 @@ public class AutoCommon extends LinearOpMode {
     protected void driveIMU(double cm, double power){
         robot.imu.resetYaw();
         robot.resetDriveEncoders();
-
         power = Math.abs(power);
         if(cm < 0) power = -power;
 
         robot.startMove(power,0,0);
 
         double ticks_to_travel = cm * robot.LR_TICKS_PER_FWD_CM;
-        double final_correction;
-        while(opModeIsActive() &&
-                (robot.isTicksLessThan(robot.motorLeft, ticks_to_travel)
-                || robot.isTicksLessThan(robot.motorRight, ticks_to_travel))
+        while(opModeIsActive() && (checkBothMotorsTicks(ticks_to_travel))
         ){
-            final_correction = calculateCorrection(robot.getHeading());
-
-            if(robot.getHeading() > ANGLE_OVERSHOOT_IMU_DRIVE){
-                robot.motorAux.setPower(final_correction);
-
-            }
-            else if(robot.getHeading() < -ANGLE_OVERSHOOT_IMU_DRIVE){
-                robot.motorAux.setPower(-final_correction);
-            }
-            else{
-                robot.motorAux.setPower(0);
-            }
+            IMU_correction();
         }
         robot.stopMove();
+    }
+
+    private boolean checkBothMotorsTicks(double ticks_to_travel){
+        return robot.isTicksLessThan(robot.motorLeft, ticks_to_travel)
+                || robot.isTicksLessThan(robot.motorRight, ticks_to_travel);
+    }
+
+    protected void IMU_correction(){
+        double final_correction = calculateCorrection(robot.getHeading());
+
+        if(robot.getHeading() > ANGLE_OVERSHOOT_IMU_DRIVE){
+            robot.motorAux.setPower(final_correction);
+
+        }
+        else if(robot.getHeading() < -ANGLE_OVERSHOOT_IMU_DRIVE){
+            robot.motorAux.setPower(-final_correction);
+        }
+        else{
+            robot.motorAux.setPower(0);
+        }
     }
 
     final double calculateCorrection(double degreesOff){

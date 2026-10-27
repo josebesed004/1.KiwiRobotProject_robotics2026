@@ -28,7 +28,7 @@ public class DrivingInstruction extends AutoCommon {
 
         // pause between initialization and run
         waitForStart();
-        runInstructions(Pause.SHORT.getPause());
+        runInstructions(Pause.SHORTEST.getPause());
 
     }
 
@@ -57,6 +57,7 @@ public class DrivingInstruction extends AutoCommon {
     }
 
     private enum Pause {
+        SHORTEST(100),
         SHORT(500),
         LONG(1000);
 
