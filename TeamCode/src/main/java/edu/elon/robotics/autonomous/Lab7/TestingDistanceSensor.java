@@ -19,15 +19,17 @@ public class TestingDistanceSensor extends DrivingInstruction {
             case 1:
                 resetInstructions();
                 addInstruction(this::reportTelemetry);
+                break;
             case 2:
                 resetInstructions();
                 addInstruction(this::getMeanAndStandardDeviation);
+                break;
             case 3:
                 resetInstructions();
                 addInstruction(() -> driveUntilLimit(strafePower));
+                break;
         }
 
-        //System.out.println("[ColorTestingTest]: Is light on? " + enableLight);
     }
 
     public void getMeanAndStandardDeviation(){
@@ -88,4 +90,5 @@ public class TestingDistanceSensor extends DrivingInstruction {
         System.out.printf("[DistanceSensorData] max distance: %.2f\n"
                 ,maxReading);
     }
+
 }

@@ -12,14 +12,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 
 import java.util.Locale;
+import java.util.function.BooleanSupplier;
 
 import edu.elon.robotics.hardware.KiwiBot;
 
 @Configurable
 public class AutoCommon extends LinearOpMode {
 
-    public static double percentInterpolate = 0.20;
-    public static double MINIMUM_SPEED = 0.2;
+    public static double percentInterpolate = 0.10;
+    public static double MINIMUM_SPEED = 0.21;
+    public static double EASE_IN_TICKS = 500;
+    public static double brightnessThreshold = 0.5;
 
     protected KiwiBot robot;
     protected final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -50,20 +53,53 @@ public class AutoCommon extends LinearOpMode {
 
     protected void driveForNTicks(double drive, double strafe, double rotate, int ticks, DcMotor motor){
         ticks = Math.abs(ticks);
-        robot.resetDriveEncoders();
         // Wait the number of ticks
         int buffer = Math.max((int) (ticks * percentInterpolate), 1);
+        int finalTicks = ticks;
+        drive(() -> isCurrentTicksLessThanMotor(motor, finalTicks)
+            , () -> setPowerInterpolated(motor, buffer, drive, strafe, rotate, finalTicks));
 
-        double powerMultiplier = 1;
+    }
 
-        while (opModeIsActive() && Math.abs(motor.getCurrentPosition()) < ticks) {
-            int currentTick = motor.getCurrentPosition();
+    protected void setPowerInterpolated(DcMotor motor, int buffer, double drive, double strafe, double rotate, int ticks){
 
-            currentTick = currentTick < 0 ? currentTick *-1 : currentTick;
+        int currentTick = motor.getCurrentPosition();
 
-            powerMultiplier = interpolationMulti(currentTick, buffer, ticks);
+        currentTick = currentTick < 0 ? currentTick *-1 : currentTick;
 
-            robot.startMove(drive * powerMultiplier, strafe * powerMultiplier, rotate * powerMultiplier);
+        double powerMultiplier = interpolationMulti(currentTick, buffer, ticks);
+
+        robot.startMove(drive * powerMultiplier, strafe * powerMultiplier, rotate * powerMultiplier);
+    }
+
+    protected void setPowerEaseStart (DcMotor motor, double drive, double strafe, double rotate){
+
+        int currentPosition = Math.abs(motor.getCurrentPosition());
+        double easeMulti = currentPosition < EASE_IN_TICKS
+                ? Math.max((double) currentPosition /EASE_IN_TICKS,MINIMUM_SPEED)
+                : 1;
+
+        robot.startMove(drive * easeMulti, strafe* easeMulti, rotate* easeMulti);
+    }
+
+    protected void setPowerEaseStart (double drive, double strafe, double rotate){
+        setPowerEaseStart(robot.motorLeft, drive, strafe, rotate);
+    }
+
+    protected boolean isCurrentTicksLessThanMotor(DcMotor motor, int ticks){
+        return Math.abs(motor.getCurrentPosition()) < ticks;
+    }
+
+    protected boolean isOnLine(){
+        int deltaBrightness = robot.maxBrightness - robot.minBrightness;
+        int cutPoint = (int)(robot.minBrightness + deltaBrightness * brightnessThreshold);
+        return robot.colorSensor.alpha() > cutPoint;
+    }
+
+    public void drive(BooleanSupplier condition, Runnable insideTheLoop){
+        robot.resetDriveEncoders();
+        while (condition.getAsBoolean() && opModeIsActive()){
+            insideTheLoop.run();
         }
         robot.stopMove();
     }

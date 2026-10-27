@@ -7,6 +7,7 @@ import edu.elon.robotics.autonomous.AutoCommon;
 
 public class DrivingInstruction extends AutoCommon {
     private Queue<Runnable> instructions = new LinkedList<>();
+    protected String tag = "[Instruction]";
     public DrivingInstruction(){
     }
 
@@ -70,6 +71,8 @@ public class DrivingInstruction extends AutoCommon {
         }
     }
 
-
+    protected void print(String toPrint){
+        System.out.println(tag + ": " + toPrint);
+    }
 
 }
