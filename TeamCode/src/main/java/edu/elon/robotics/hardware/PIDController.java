@@ -53,18 +53,20 @@ public class PIDController {
      * update() is incomplete.
      */
     public double update(double actual) {
-        double error = 0;       // FIXME: compute the error between actual and target
+        double error = actual - target;
 
         // update metrics
         call_count++;
         total_error += error;
 
-        // FIXME: compute the sumError
-        // FIXME: compute the diffError
-        // FIXME: remember the previous error for next iteration
-        // FIXME: return the PID calculation
 
-        return 0;   // FIXME: remove this when above is done
+        sumError = sumError * 0.8 + error;
+
+        double diffError = error - prevError;
+
+        prevError = error;
+
+        return kP * error + kI * sumError + kD * diffError;
     }
 
     /*
