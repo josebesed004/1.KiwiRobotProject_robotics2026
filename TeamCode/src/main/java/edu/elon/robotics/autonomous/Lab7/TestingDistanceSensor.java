@@ -12,7 +12,7 @@ import edu.elon.robotics.JoseTools.DrivingInstruction;
 @Configurable
 @Autonomous(name="Telemetry for distance sensor", group = "Lab7")
 public class TestingDistanceSensor extends DrivingInstruction {
-    public static double strafePower = -0.3;
+    public static double strafePower = -Speed.SLOW.speed;
     public static int functionTest = 1;
     public TestingDistanceSensor(){
         switch (functionTest) {
@@ -29,7 +29,6 @@ public class TestingDistanceSensor extends DrivingInstruction {
                 addInstruction(() -> driveUntilLimit(strafePower));
                 break;
         }
-
     }
 
     public void getMeanAndStandardDeviation(){
@@ -80,9 +79,9 @@ public class TestingDistanceSensor extends DrivingInstruction {
     }
 
     protected void driveUntilLimit(double power){
-        double maxReading = 0.0;
+        double maxReading = maxReading = robot.distanceSensor.getDistance(DistanceUnit.CM);;
         robot.startMove(0,power,0);
-        while (!robot.touchSensor.isPressed() && robot.distanceSensor.getDistance(DistanceUnit.CM) < 200){
+        while (!robot.touchSensor.isPressed() && maxReading < 200){
             maxReading = robot.distanceSensor.getDistance(DistanceUnit.CM);
         }
         robot.stopMove();
