@@ -23,6 +23,7 @@ public class DrivingInstruction extends AutoCommon {
     public void runOpMode() throws InterruptedException {
 
         // set up the robot for autonomous mode
+        System.out.println("[DEBUG] runOpMode");
         super.runOpMode();
 
         // any initialization should be done before waitForStart()

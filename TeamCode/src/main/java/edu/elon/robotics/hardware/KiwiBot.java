@@ -9,6 +9,7 @@ package edu.elon.robotics.hardware;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevTouchSensor;
@@ -55,12 +56,17 @@ public class KiwiBot {
 
     public Rev2mDistanceSensor distanceSensor;
 
+    public HuskyLens huskyLens;
+
     public KiwiBot(HardwareMap hardwareMap, boolean isAuto) {
 
         // access the motors defined in the configuration
         motorLeft = hardwareMap.dcMotor.get("motorLeft");
         motorRight = hardwareMap.dcMotor.get("motorRight");
         motorAux = hardwareMap.dcMotor.get("motorAux");
+
+        huskyLens = hardwareMap.get(HuskyLens.class,"huskylens");
+        huskyLens.selectAlgorithm(HuskyLens.Algorithm.LINE_TRACKING);
 
         // drop the drivebase motors into an array
         // we are only doing this to allow us to write loops to control the drivebase
