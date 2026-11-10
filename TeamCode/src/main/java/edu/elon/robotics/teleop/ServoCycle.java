@@ -9,8 +9,8 @@ package edu.elon.robotics.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import edu.elon.robotics.base.ControlledServo;
 import edu.elon.robotics.hardware.KiwiBot;
+import edu.elon.robotics.hardware.ControlledServo;
 
 @TeleOp(name = "Servo Cycle")
 public class ServoCycle extends LinearOpMode {

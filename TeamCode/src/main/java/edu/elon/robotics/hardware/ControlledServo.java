@@ -1,4 +1,4 @@
-package edu.elon.robotics.base;
+package edu.elon.robotics.hardware;
 
 /**
  * A helper class for controlling servos.

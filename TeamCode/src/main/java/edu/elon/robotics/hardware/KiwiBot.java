@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -33,6 +34,11 @@ public class KiwiBot {
     public DcMotor motorLeft;
     public DcMotor motorRight;
     public DcMotor motorAux;
+
+    //servo motors
+    public Servo servoShoulder;
+    public Servo servoElbow;
+    public Servo servoGripper;
 
     // array of motors - useful when performing the same task for each motor
     private final DcMotor[] drivebase;
@@ -114,6 +120,11 @@ public class KiwiBot {
         touchSensor = hardwareMap.get(RevTouchSensor.class, "touchSensor");
         colorSensor = hardwareMap.get(ColorSensor.class, "colorSensor");
         distanceSensor = hardwareMap.get(Rev2mDistanceSensor .class, "distanceSensor");
+
+        //servo motor setup
+        servoShoulder = hardwareMap.get(Servo.class, "servoShoulder");
+        servoElbow = hardwareMap.get(Servo.class, "servoElbow");
+        servoGripper = hardwareMap.get(Servo.class, "servoGripper");
 
     }
 
