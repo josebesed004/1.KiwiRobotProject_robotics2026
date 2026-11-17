@@ -33,9 +33,9 @@ public class ServoCycle extends LinearOpMode {
          */
         // define the arm servos
         ControlledServo[] servos = {
-                new ControlledServo(robot.servoShoulder, "shoulder", 0.5, 0.15, 0.85),
+                new ControlledServo(robot.servoShoulder, "shoulder", 0.5, 0.5, 0.87),
                 new ControlledServo(robot.servoElbow, "elbow", 0.5, 0.0, 1.0),
-                new ControlledServo(robot.servoGripper, "gripper", 0.5, 0.15, 0.55)
+                new ControlledServo(robot.servoGripper, "gripper", 0.5, 0.3, 0.9)
         };
         int which_servo = 0;
 
