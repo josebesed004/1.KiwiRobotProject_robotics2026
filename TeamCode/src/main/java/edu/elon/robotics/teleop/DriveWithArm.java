@@ -31,22 +31,38 @@ package edu.elon.robotics.teleop;
  * Both options for reading user button presses are useful.
  */
 
+import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import edu.elon.robotics.autonomous.AutoCommon;
 import edu.elon.robotics.hardware.ControlledServo;
 import edu.elon.robotics.hardware.KiwiBot;
 
+@Configurable
 @TeleOp(name = "Drive Robot with Arm", group = "TeleOp")
-public class DriveWithArm extends LinearOpMode {
+public class DriveWithArm extends AutoCommon {
 
     // declare a variable that will represent the robot hardware (i.e., the robot)
-    private KiwiBot robot;
 
     // helper classes for controlling servos
     ControlledServo shoulder, elbow, gripper;
 
+    public static double blue_height = 0.0;
+    public static double red_height = 0.0;
+
+    public static double red_distance = 0.0;
+
+    public static double blue_distance = 0.0;
+
+    public static int RED_ID = 1;
+    public static int BLUE_ID = 2;
+
+    public static String Color = "";
+
+    public static boolean IsRedOnRight = false;
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -71,6 +87,8 @@ public class DriveWithArm extends LinearOpMode {
         telemetry.addData("status", "robot is ready!");
         telemetry.update();
 
+        robot.huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
+
         // block and wait until start is pressed
         waitForStart();
 
@@ -78,8 +96,14 @@ public class DriveWithArm extends LinearOpMode {
         while (opModeIsActive()){
             stickDriving();
             controlArm();
+
+            colorDetection();
+
+            telemetry.addData("Detected Color", Color);
+            telemetry.update();
         }
     }
+
 
     private boolean wasAPressed = false;
     private boolean wasBPressed = false;
@@ -97,7 +121,60 @@ public class DriveWithArm extends LinearOpMode {
     private final double GRIPPER_OPEN = 0.8;
     private final double GRIPPER_CLOSED = 0.45;
 
+    private static Double left_box = 0.0;
+
+    private static Double right_box = 0.0;
+
     private final long UP_MOVE_TIME = 2000;  // 2 seconds
+
+
+    public void LeftAutonomous() {
+
+        double height = IsRedOnRight ? blue_height : red_height;
+        double distance = IsRedOnRight ? blue_distance : red_distance;;
+
+        driveDistance(0, -distance, 0.5);
+
+        turnIMU(90,0.5);
+
+        shoulder.setPosition(SHOULDER_UP);
+        elbow.setPosition(ELBOW_UP);
+        shoulder.update();
+        elbow.update();
+        sleep(1500);
+
+        gripper.setPosition(GRIPPER_OPEN);
+        gripper.update();
+        sleep(500);
+
+        turnIMU(-90,0.5);
+
+        driveDistance(0, distance, 0.5);
+    }
+
+    public void RightAutonomous() {
+
+        double height = IsRedOnRight ? red_height : blue_height;
+        double distance = IsRedOnRight ? red_distance : blue_distance;
+
+        driveDistance(0, distance, 0.5);
+
+        turnIMU(-90,0.5);
+
+        shoulder.setPosition(SHOULDER_UP);
+        elbow.setPosition(ELBOW_UP);
+        shoulder.update();
+        elbow.update();
+        sleep(1500);
+
+        gripper.setPosition(GRIPPER_OPEN);
+        gripper.update();
+        sleep(500);
+
+        turnIMU(90,0.5);
+
+        driveDistance(0, -distance, 0.5);
+    }
 
     public void controlArm() {
         // what is the player asking us to do?
@@ -121,6 +198,20 @@ public class DriveWithArm extends LinearOpMode {
             armMovement = ArmMovement.OPEN;
         }
         wasYPressed = gamepad1.y;
+
+        if (gamepad1.right_bumper && gamepad1.left_bumper) {
+            colorDetection();
+
+            if(Color.equals("RED")){
+                if (IsRedOnRight) RightAutonomous();
+                else  LeftAutonomous();
+            }
+
+            else if (Color.equals("BLUE")){
+                if (IsRedOnRight) LeftAutonomous();
+                else RightAutonomous();
+            }
+        }
 
         // perform the requested action (FSM)
         switch (armMovement) {
@@ -179,6 +270,25 @@ public class DriveWithArm extends LinearOpMode {
 
         // call startMove to move the robot
         robot.startMove(drive, strafe, turn);
+    }
+
+    private void colorDetection(){
+        robot.huskyLens.blocks();
+
+        Color = "UNKNOWN";
+
+        for (HuskyLens.Block block : robot.huskyLens.blocks()) {
+            if (block.id == RED_ID) {
+                Color = "RED";
+                break;
+            }
+            // Repeat test for a blue block
+            else if (block.id == BLUE_ID) {
+                Color = "BLUE";
+                break;
+            }
+
+        }
     }
 
 }
